@@ -109,6 +109,7 @@ class Agent:
         t_start = time.time()
         self.pre_sample()
         to_test(*self.sample_modules)
+        print("Finished pre_sample...")
         with to_cpu(*self.sample_modules):
             with torch.no_grad():
                 thread_batch_size = int(math.floor(min_batch_size / nthreads))
@@ -119,12 +120,14 @@ class Agent:
                     worker_args = (i+1, queue, thread_batch_size, mean_action, render)
                     worker = multiprocessing.Process(target=self.sample_worker, args=worker_args)
                     worker.start()
+                print("Started sample_worker...")
                 memories[0], loggers[0] = self.sample_worker(0, None, thread_batch_size, mean_action, render)
 
                 for i in range(nthreads - 1):
                     pid, worker_memory, worker_logger = queue.get()
                     memories[pid] = worker_memory
                     loggers[pid] = worker_logger
+                print("Started traj_cls...")
                 traj_batch = self.traj_cls(memories)
                 logger = self.logger_cls.merge(loggers, **self.logger_kwargs)
 

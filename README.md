@@ -52,6 +52,9 @@ You can train your own models using the provided config in [design_opt/cfg](desi
 ```
 python design_opt/train.py --cfg hopper --gpu 0
 ```
+```
+OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 python design_opt/train.py --cfg hopper --gpu 0 --num_threads 20
+```
 You can replace `hopper` with {`ant`, `gap`, `swimmer`} to train other environments. Here is the correspondence between the configs and the environments in the paper: `hopper - 2D Locomotion`, `ant - 3D Locomotion`, `swimmer - Swimmer`, and `gap - Gap Crosser`.
 
 # Visualization

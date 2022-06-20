@@ -204,15 +204,18 @@ class Transform2ActAgent(AgentPPO):
         """generate multiple trajectories that reach the minimum batch_size"""
         t0 = time.time()
         batch, log = self.sample(self.cfg.min_batch_size)
+        print("Finished sampling...")
 
         """update networks"""
         t1 = time.time()
         self.update_params(batch)
         t2 = time.time()
+        print("Finished update_param...")
 
         """evaluate policy"""
         _, log_eval = self.sample(self.cfg.eval_batch_size, mean_action=True)
-        t3 = time.time() 
+        t3 = time.time()
+        print("Finished eval...")
 
         info = {
             'log': log, 'log_eval': log_eval, 'T_sample': t1 - t0, 'T_update': t2 - t1, 'T_eval': t3 - t2, 'T_total': t3 - t0
@@ -346,7 +349,7 @@ class Transform2ActAgent(AgentPPO):
 
             env._get_viewer('human')._paused = paused
             env.render()
-            for t in range(10000):
+            for t in range(400):
                 state_var = tensorfy([state])
                 with torch.no_grad():
                     action = self.policy_net.select_action(state_var, mean_action).numpy().astype(np.float64)
@@ -362,7 +365,7 @@ class Transform2ActAgent(AgentPPO):
                 if save_video:
                     frame_dir = f'out/videos/{self.cfg.id}_frames'
                     os.makedirs(frame_dir, exist_ok=True)
-                    save_screen_shots(env.viewer.window, f'{frame_dir}/%04d.png' % fr)
+                    save_screen_shots(env.viewer.window, f'{frame_dir}/%04d.png' % fr, autogui=True)
                     fr += 1
                     if fr >= max_num_frames:
                         break

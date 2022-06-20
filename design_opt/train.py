@@ -9,10 +9,10 @@ from design_opt.agents.transform2act_agent import Transform2ActAgent
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--cfg', default=None)
+parser.add_argument('--cfg', default="hopper")
 parser.add_argument('--render', action='store_true', default=False)
 parser.add_argument('--tmp', action='store_true', default=False)
-parser.add_argument('--num_threads', type=int, default=20)
+parser.add_argument('--num_threads', type=int, default=16)
 parser.add_argument('--gpu_index', type=int, default=0)
 parser.add_argument('--epoch', default='0')
 parser.add_argument('--show_noise', action='store_true', default=False)
@@ -41,7 +41,8 @@ def main_loop():
         agent.pre_epoch_update(start_epoch)
         agent.sample(1e8, mean_action=not args.show_noise, render=True)
     else:
-        for epoch in range(start_epoch, cfg.max_epoch_num):          
+        for epoch in range(start_epoch, cfg.max_epoch_num):
+            print("Started epoch...")
             agent.optimize(epoch)
             agent.save_checkpoint(epoch)
 
